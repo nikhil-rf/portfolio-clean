@@ -28,7 +28,7 @@ export default function Page() {
               <BlurFade delay={BLUR_FADE_DELAY}>
                 <div className="max-w-[600px] md:text-xl">
                   <p className="text-foreground">
-                    I&apos;m a{" "}
+                  I'm a{" "}
                     <AnimatedWords
                       words={["Software Engineer", "Builder arc", "Developer", "Engineer", "ShitPoster"]}
                       interval={3000}
