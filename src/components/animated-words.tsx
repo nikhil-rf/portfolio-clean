@@ -14,38 +14,22 @@ const AnimatedWordsComponent = ({
   className = "",
 }: AnimatedWordsProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    const exitTimer = setTimeout(() => {
-      setIsExiting(true);
-    }, interval - 800); // Start exit animation 800ms before interval ends
-
-    const nextTimer = setTimeout(() => {
-      setIsExiting(false);
+    const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % words.length);
     }, interval);
 
-    return () => {
-      clearTimeout(exitTimer);
-      clearTimeout(nextTimer);
-    };
+    return () => clearInterval(timer);
   }, [interval, words.length]);
-
-  useEffect(() => {
-    // Reset animation state on mount
-    setCurrentIndex(0);
-    setIsExiting(false);
-  }, []);
 
   return (
     <span className={`relative inline-block align-baseline ${className}`}>
       <span
-        className="text-foreground font-semibold whitespace-nowrap"
+        key={currentIndex}
+        className="inline-block text-foreground font-semibold whitespace-nowrap"
         style={{
-          animation: isExiting
-            ? "slideUpOut 0.8s ease-in forwards"
-            : "slideUpIn 0.6s ease-out forwards",
+          animation: "slideUpIn 0.6s ease-out forwards",
         }}
       >
         {words[currentIndex]}
@@ -61,24 +45,12 @@ const AnimatedWordsComponent = ({
             transform: translateY(0);
           }
         }
-
-        @keyframes slideUpOut {
-          from {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          to {
-            opacity: 0;
-            transform: translateY(-40px);
-          }
-        }
       `}</style>
     </span>
   );
 };
 
 export const AnimatedWords = memo(AnimatedWordsComponent, (prevProps, nextProps) => {
-  // Return true if props are equal (don't re-render), false to re-render
   return (
     prevProps.interval === nextProps.interval &&
     prevProps.className === nextProps.className &&

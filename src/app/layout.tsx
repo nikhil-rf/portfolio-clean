@@ -55,7 +55,7 @@ export default function RootLayout({
         )}
         suppressHydrationWarning
       >
-        <ThemeProvider attribute="class" defaultTheme="light">
+        <ThemeProvider attribute="class" defaultTheme="dark" storageKey="theme">
           <TooltipProvider delayDuration={0}>
             {children}
             <Navbar />
