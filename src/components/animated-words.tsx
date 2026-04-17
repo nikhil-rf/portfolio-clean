@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 
 interface AnimatedWordsProps {
   words: string[];
@@ -8,11 +8,11 @@ interface AnimatedWordsProps {
   className?: string;
 }
 
-export function AnimatedWords({
+const AnimatedWordsComponent = ({
   words,
   interval = 3000,
   className = "",
-}: AnimatedWordsProps) {
+}: AnimatedWordsProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
 
@@ -30,12 +30,17 @@ export function AnimatedWords({
       clearTimeout(exitTimer);
       clearTimeout(nextTimer);
     };
-  }, [currentIndex, words, interval]);
+  }, [interval, words.length]);
+
+  useEffect(() => {
+    // Reset animation state on mount
+    setCurrentIndex(0);
+    setIsExiting(false);
+  }, []);
 
   return (
-    <div className={`relative inline-block align-baseline ${className}`}>
-      <div
-        key={currentIndex}
+    <span className={`relative inline-block align-baseline ${className}`}>
+      <span
         className="text-foreground font-semibold whitespace-nowrap"
         style={{
           animation: isExiting
@@ -44,7 +49,7 @@ export function AnimatedWords({
         }}
       >
         {words[currentIndex]}
-      </div>
+      </span>
       <style jsx>{`
         @keyframes slideUpIn {
           from {
@@ -68,6 +73,16 @@ export function AnimatedWords({
           }
         }
       `}</style>
-    </div>
+    </span>
   );
-}
+};
+
+export const AnimatedWords = memo(AnimatedWordsComponent, (prevProps, nextProps) => {
+  // Return true if props are equal (don't re-render), false to re-render
+  return (
+    prevProps.interval === nextProps.interval &&
+    prevProps.className === nextProps.className &&
+    prevProps.words.length === nextProps.words.length &&
+    prevProps.words.every((word, idx) => word === nextProps.words[idx])
+  );
+});
